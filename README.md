@@ -1,4 +1,4 @@
-<img width="1145" height="822" alt="image" src="https://github.com/user-attachments/assets/53c0f840-a1d5-41bf-b3aa-4020282e0ed2" /><img width="1145" height="822" alt="image" src="https://github.com/user-attachments/assets/236cb3c2-49b2-4f03-962a-d3645686e5aa" /># 🛒 Scalable Multi-Vendor E-Commerce Data Access Layer
+<img width="1145" height="822" alt="image" src="https://github.com/user-attachments/assets/236cb3c2-49b2-4f03-962a-d3645686e5aa" /># 🛒 Scalable Multi-Vendor E-Commerce Data Access Layer
 
 A scalable backend application built using **Spring Boot**, **Hibernate (JPA)**, and **MySQL** that provides a complete data access layer for a multi-vendor e-commerce platform. The project demonstrates clean architecture, optimized database design, RESTful APIs, and efficient entity relationships.
 
