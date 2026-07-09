@@ -2,7 +2,6 @@ package com.example.E_Commerce_Data_Layer.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.example.E_Commerce_Data_Layer.DTO.UserDTO;
@@ -16,41 +15,65 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class UserService {
 
-	
 	private UserReposetry repo;
-	
-	public User insert(UserDTO dto) {
-		User user=new User();
+
+	public UserDTO insert(UserDTO dto) {
+
+		User user = new User();
+
 		user.setUsername(dto.getUsername());
 		user.setEmail(dto.getEmail());
-		user.setPassword(dto.getPassword());
-		return repo.save(user);
+
+		User saved = repo.save(user);
+
+		return convertToDTO(saved);
 	}
-	
-	public Page<User> getAllUsers(int page, int size) {
 
-        Pageable pageable = PageRequest.of(page, size);
+	public Page<UserDTO> getAllUsers(int page, int size) {
 
-        return repo.findAll(pageable);
-    }
-	
-	public User getOneUser(Long id) {
-		return repo.findById(id).orElseThrow(()->new NotFound("User Noo Found With This ID : "+id));
+		return repo.findAll(PageRequest.of(page, size)).map(this::convertToDTO);
 	}
-	
-	public User update(Long id,UserDTO dto) {
-		User user=repo.findById(id).orElseThrow(()->new NotFound("User Noo Found With This ID : "+id));
 
-        user.setUsername(dto.getUsername());
-        user.setEmail(dto.getEmail());
-        user.setPassword(dto.getPassword());
+	public UserDTO getOneUser(Long id) {
 
-        return repo.save(user);
+		User user = repo.findById(id).orElseThrow(() -> new NotFound("User Not Found With Id : " + id));
+
+		return convertToDTO(user);
 	}
-	
+
+	// ================= UPDATE =================
+
+	public UserDTO update(Long id, UserDTO dto) {
+
+		User user = repo.findById(id).orElseThrow(() -> new NotFound("User Not Found With Id : " + id));
+
+		user.setUsername(dto.getUsername());
+		user.setEmail(dto.getEmail());
+
+		User updated = repo.save(user);
+
+		return convertToDTO(updated);
+	}
+
 	public String delete(Long id) {
-		 repo.deleteById(id);
-		 return "Delete SuccessFull";
+
+		if (!repo.existsById(id)) {
+			throw new NotFound("User Not Found With Id : " + id);
+		}
+
+		repo.deleteById(id);
+
+		return "User Deleted Successfully";
+	}
+
+	private UserDTO convertToDTO(User user) {
+
+		UserDTO dto = new UserDTO();
+
+		dto.setId(user.getId());
+		dto.setUsername(user.getUsername());
+		dto.setEmail(user.getEmail());
+
+		return dto;
 	}
 }
-

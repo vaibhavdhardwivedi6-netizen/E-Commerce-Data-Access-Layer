@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.E_Commerce_Data_Layer.DTO.ProductDTO;
-import com.example.E_Commerce_Data_Layer.Entity.Product;
 import com.example.E_Commerce_Data_Layer.service.ProductService;
 
 @RestController
@@ -17,26 +16,26 @@ public class ProductController {
 	private ProductService service;
 
 	@PostMapping
-	public ResponseEntity<Product> save(@RequestBody ProductDTO dto) {
+	public ResponseEntity<ProductDTO> save(@RequestBody ProductDTO dto) {
 
 		return ResponseEntity.ok(service.save(dto));
 	}
 
 	@GetMapping
-	public ResponseEntity<Page<Product>> getAll(@RequestParam(defaultValue = "0") int page,
+	public ResponseEntity<Page<ProductDTO>> getAll(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int size) {
 
 		return ResponseEntity.ok(service.getAll(page, size));
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<Product> getById(@PathVariable Long id) {
+	public ResponseEntity<ProductDTO> getById(@PathVariable Long id) {
 
 		return ResponseEntity.ok(service.getById(id));
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Product> update(@PathVariable Long id, @RequestBody ProductDTO dto) {
+	public ResponseEntity<ProductDTO> update(@PathVariable Long id, @RequestBody ProductDTO dto) {
 
 		return ResponseEntity.ok(service.update(id, dto));
 	}

@@ -17,54 +17,71 @@ import com.example.E_Commerce_Data_Layer.Reposetry.OrderReposetry;
 @Service
 public class OrderService {
 
-    @Autowired
-    private OrderReposetry repo;
+	@Autowired
+	private OrderReposetry repo;
 
-    @Autowired
-    private CustomerProfileReposetry customerRepo;
+	@Autowired
+	private CustomerProfileReposetry customerRepo;
 
-    public Order save(Long customerId, OrderDTO dto) {
+	public OrderDTO save(Long customerId, OrderDTO dto) {
 
-        CustomerProfile customer = customerRepo.findById(customerId)
-                .orElseThrow(() -> new NotFound("Customer Not Found With Id : " + customerId));
+		CustomerProfile customer = customerRepo.findById(customerId)
+				.orElseThrow(() -> new NotFound("Customer Not Found With Id : " + customerId));
 
-        Order order = new Order();
+		Order order = new Order();
 
-        order.setCustomer(customer);
-        order.setOrderDate(LocalDateTime.now());
-        order.setStatus(dto.getStatus());
+		order.setCustomer(customer);
+		order.setOrderDate(LocalDateTime.now());
+		order.setStatus(dto.getStatus());
 
-        return repo.save(order);
-    }
+		Order saved = repo.save(order);
 
-    public Page<Order> getAll(int page, int size) {
-        return repo.findAll(PageRequest.of(page, size));
-    }
+		return convertToDTO(saved);
+	}
 
-    public Order getById(Long id) {
+	public Page<OrderDTO> getAll(int page, int size) {
 
-        return repo.findById(id)
-                .orElseThrow(() -> new NotFound("Order Not Found With Id : " + id));
-    }
+		return repo.findAll(PageRequest.of(page, size)).map(this::convertToDTO);
+	}
 
-    public Order update(Long id, OrderDTO dto) {
+	public OrderDTO getById(Long id) {
 
-        Order order = repo.findById(id)
-                .orElseThrow(() -> new NotFound("Order Not Found With Id : " + id));
+		Order order = repo.findById(id).orElseThrow(() -> new NotFound("Order Not Found With Id : " + id));
 
-        order.setStatus(dto.getStatus());
+		return convertToDTO(order);
+	}
 
-        return repo.save(order);
-    }
+	public OrderDTO update(Long id, OrderDTO dto) {
 
-    public String delete(Long id) {
+		Order order = repo.findById(id).orElseThrow(() -> new NotFound("Order Not Found With Id : " + id));
 
-        if (!repo.existsById(id)) {
-            throw new NotFound("Order Not Found With Id : " + id);
-        }
+		order.setStatus(dto.getStatus());
 
-        repo.deleteById(id);
+		Order updated = repo.save(order);
 
-        return "Order Deleted Successfully";
-    }
+		return convertToDTO(updated);
+	}
+
+	public String delete(Long id) {
+
+		if (!repo.existsById(id)) {
+			throw new NotFound("Order Not Found With Id : " + id);
+		}
+
+		repo.deleteById(id);
+
+		return "Order Deleted Successfully";
+	}
+
+	private OrderDTO convertToDTO(Order order) {
+
+		OrderDTO dto = new OrderDTO();
+
+		dto.setId(order.getId());
+		dto.setCustomerId(order.getCustomer().getId());
+		dto.setOrderDate(order.getOrderDate());
+		dto.setStatus(order.getStatus());
+
+		return dto;
+	}
 }

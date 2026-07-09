@@ -16,34 +16,40 @@ public class VendorService {
 	@Autowired
 	private VendorReposetry repo;
 
-	public Vendor save(VendorDTO dto) {
+	public VendorDTO save(VendorDTO dto) {
 
 		Vendor vendor = new Vendor();
 
 		vendor.setName(dto.getName());
 		vendor.setContactEmail(dto.getContactEmail());
 
-		return repo.save(vendor);
+		Vendor saved = repo.save(vendor);
+
+		return convertToDTO(saved);
 	}
 
-	public Page<Vendor> getAll(int page, int size) {
+	public Page<VendorDTO> getAll(int page, int size) {
 
-		return repo.findAll(PageRequest.of(page, size));
+		return repo.findAll(PageRequest.of(page, size)).map(this::convertToDTO);
 	}
 
-	public Vendor getById(Long id) {
+	public VendorDTO getById(Long id) {
 
-		return repo.findById(id).orElseThrow(() -> new NotFound("Vendor Not Found With Id : " + id));
+		Vendor vendor = repo.findById(id).orElseThrow(() -> new NotFound("Vendor Not Found With Id : " + id));
+
+		return convertToDTO(vendor);
 	}
 
-	public Vendor update(Long id, VendorDTO dto) {
+	public VendorDTO update(Long id, VendorDTO dto) {
 
 		Vendor vendor = repo.findById(id).orElseThrow(() -> new NotFound("Vendor Not Found With Id : " + id));
 
 		vendor.setName(dto.getName());
 		vendor.setContactEmail(dto.getContactEmail());
 
-		return repo.save(vendor);
+		Vendor updated = repo.save(vendor);
+
+		return convertToDTO(updated);
 	}
 
 	public String delete(Long id) {
@@ -55,5 +61,16 @@ public class VendorService {
 		repo.deleteById(id);
 
 		return "Vendor Deleted Successfully";
+	}
+
+	private VendorDTO convertToDTO(Vendor vendor) {
+
+		VendorDTO dto = new VendorDTO();
+
+		dto.setId(vendor.getId());
+		dto.setName(vendor.getName());
+		dto.setContactEmail(vendor.getContactEmail());
+
+		return dto;
 	}
 }

@@ -17,64 +17,80 @@ import com.example.E_Commerce_Data_Layer.Reposetry.ProductReposetry;
 @Service
 public class OrderItemService {
 
-    @Autowired
-    private OrderItemReposetry repo;
+	@Autowired
+	private OrderItemReposetry repo;
 
-    @Autowired
-    private OrderReposetry orderRepo;
+	@Autowired
+	private OrderReposetry orderRepo;
 
-    @Autowired
-    private ProductReposetry productRepo;
+	@Autowired
+	private ProductReposetry productRepo;
 
-    public OrderItem save(Long orderId, Long productId, OrderItemDTO dto) {
+	public OrderItemDTO save(Long orderId, Long productId, OrderItemDTO dto) {
 
-        Order order = orderRepo.findById(orderId)
-                .orElseThrow(() -> new NotFound("Order Not Found With Id : " + orderId));
+		Order order = orderRepo.findById(orderId)
+				.orElseThrow(() -> new NotFound("Order Not Found With Id : " + orderId));
 
-        Product product = productRepo.findById(productId)
-                .orElseThrow(() -> new NotFound("Product Not Found With Id : " + productId));
+		Product product = productRepo.findById(productId)
+				.orElseThrow(() -> new NotFound("Product Not Found With Id : " + productId));
 
-        OrderItem item = new OrderItem();
+		OrderItem item = new OrderItem();
 
-        item.setOrder(order);
-        item.setProduct(product);
-        item.setQuantity(dto.getQuantity());
-        item.setPrice(dto.getPrice());
+		item.setOrder(order);
+		item.setProduct(product);
+		item.setQuantity(dto.getQuantity());
+		item.setPrice(dto.getPrice());
 
-        return repo.save(item);
-    }
+		OrderItem saved = repo.save(item);
 
-    public Page<OrderItem> getAll(int page, int size) {
+		return convertToDTO(saved);
+	}
 
-        return repo.findAll(PageRequest.of(page, size));
-    }
+	public Page<OrderItemDTO> getAll(int page, int size) {
 
-    public OrderItem getById(Long id) {
+		return repo.findAll(PageRequest.of(page, size)).map(this::convertToDTO);
+	}
 
-        return repo.findById(id)
-                .orElseThrow(() -> new NotFound("OrderItem Not Found With Id : " + id));
-    }
+	public OrderItemDTO getById(Long id) {
 
-    public OrderItem update(Long id, OrderItemDTO dto) {
+		OrderItem item = repo.findById(id).orElseThrow(() -> new NotFound("OrderItem Not Found With Id : " + id));
 
-        OrderItem item = repo.findById(id)
-                .orElseThrow(() -> new NotFound("OrderItem Not Found With Id : " + id));
+		return convertToDTO(item);
+	}
 
-        item.setQuantity(dto.getQuantity());
-        item.setPrice(dto.getPrice());
+	public OrderItemDTO update(Long id, OrderItemDTO dto) {
 
-        return repo.save(item);
-    }
+		OrderItem item = repo.findById(id).orElseThrow(() -> new NotFound("OrderItem Not Found With Id : " + id));
 
-    public String delete(Long id) {
+		item.setQuantity(dto.getQuantity());
+		item.setPrice(dto.getPrice());
 
-        if (!repo.existsById(id)) {
-            throw new NotFound("OrderItem Not Found With Id : " + id);
-        }
+		OrderItem updated = repo.save(item);
 
-        repo.deleteById(id);
+		return convertToDTO(updated);
+	}
 
-        return "OrderItem Deleted Successfully";
-    }
+	public String delete(Long id) {
 
+		if (!repo.existsById(id)) {
+			throw new NotFound("OrderItem Not Found With Id : " + id);
+		}
+
+		repo.deleteById(id);
+
+		return "OrderItem Deleted Successfully";
+	}
+
+	private OrderItemDTO convertToDTO(OrderItem item) {
+
+		OrderItemDTO dto = new OrderItemDTO();
+
+		dto.setId(item.getId());
+		dto.setProductId(item.getProduct().getId());
+		dto.setProductName(item.getProduct().getName());
+		dto.setQuantity(item.getQuantity());
+		dto.setPrice(item.getPrice());
+
+		return dto;
+	}
 }

@@ -14,47 +14,43 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.E_Commerce_Data_Layer.DTO.OrderDTO;
-import com.example.E_Commerce_Data_Layer.Entity.Order;
 import com.example.E_Commerce_Data_Layer.service.OrderService;
 
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
 
-    @Autowired
-    private OrderService service;
+	@Autowired
+	private OrderService service;
 
-    @PostMapping("/{customerId}")
-    public ResponseEntity<Order> save(@PathVariable Long customerId,
-                                      @RequestBody OrderDTO dto) {
+	@PostMapping("/{customerId}")
+	public ResponseEntity<OrderDTO> save(@PathVariable Long customerId, @RequestBody OrderDTO dto) {
 
-        return ResponseEntity.ok(service.save(customerId, dto));
-    }
+		return ResponseEntity.ok(service.save(customerId, dto));
+	}
 
-    @GetMapping
-    public ResponseEntity<Page<Order>> getAll(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size) {
+	@GetMapping
+	public ResponseEntity<Page<OrderDTO>> getAll(@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "5") int size) {
 
-        return ResponseEntity.ok(service.getAll(page, size));
-    }
+		return ResponseEntity.ok(service.getAll(page, size));
+	}
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Order> getById(@PathVariable Long id) {
+	@GetMapping("/{id}")
+	public ResponseEntity<OrderDTO> getById(@PathVariable Long id) {
 
-        return ResponseEntity.ok(service.getById(id));
-    }
+		return ResponseEntity.ok(service.getById(id));
+	}
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Order> update(@PathVariable Long id,
-                                        @RequestBody OrderDTO dto) {
+	@PutMapping("/{id}")
+	public ResponseEntity<OrderDTO> update(@PathVariable Long id, @RequestBody OrderDTO dto) {
 
-        return ResponseEntity.ok(service.update(id, dto));
-    }
+		return ResponseEntity.ok(service.update(id, dto));
+	}
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete(@PathVariable Long id) {
+	@DeleteMapping("/{id}")
+	public ResponseEntity<String> delete(@PathVariable Long id) {
 
-        return ResponseEntity.ok(service.delete(id));
-    }
+		return ResponseEntity.ok(service.delete(id));
+	}
 }

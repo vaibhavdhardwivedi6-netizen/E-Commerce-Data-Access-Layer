@@ -26,7 +26,8 @@ public class ProductService {
 	@Autowired
 	private VendorReposetry vendorRepo;
 
-	public Product save(ProductDTO dto) {
+
+	public ProductDTO save(ProductDTO dto) {
 
 		Category category = categoryRepo.findById(dto.getCategoryId())
 				.orElseThrow(() -> new NotFound("Category Not Found"));
@@ -40,18 +41,28 @@ public class ProductService {
 		product.setCategory(category);
 		product.setVendor(vendor);
 
-		return repo.save(product);
+		Product saved = repo.save(product);
+
+		return convertToDTO(saved);
 	}
 
-	public Page<Product> getAll(int page, int size) {
-		return repo.findAll(PageRequest.of(page, size));
+	public Page<ProductDTO> getAll(int page, int size) {
+
+		Page<Product> products = repo.findAll(PageRequest.of(page, size));
+
+		return products.map(this::convertToDTO);
 	}
 
-	public Product getById(Long id) {
-		return repo.findById(id).orElseThrow(() -> new NotFound("Product Not Found With Id : " + id));
+
+	public ProductDTO getById(Long id) {
+
+		Product product = repo.findById(id).orElseThrow(() -> new NotFound("Product Not Found With Id : " + id));
+
+		return convertToDTO(product);
 	}
 
-	public Product update(Long id, ProductDTO dto) {
+
+	public ProductDTO update(Long id, ProductDTO dto) {
 
 		Product product = repo.findById(id).orElseThrow(() -> new NotFound("Product Not Found With Id : " + id));
 
@@ -65,8 +76,12 @@ public class ProductService {
 		product.setCategory(category);
 		product.setVendor(vendor);
 
-		return repo.save(product);
+		Product updated = repo.save(product);
+
+		return convertToDTO(updated);
 	}
+
+	
 
 	public String delete(Long id) {
 
@@ -79,4 +94,22 @@ public class ProductService {
 		return "Product Deleted Successfully";
 	}
 
+
+	private ProductDTO convertToDTO(Product product) {
+
+		ProductDTO dto = new ProductDTO();
+
+		dto.setId(product.getId());
+		dto.setName(product.getName());
+		dto.setPrice(product.getPrice());
+		dto.setActive(product.isActive());
+
+		dto.setCategoryId(product.getCategory().getId());
+		dto.setCategoryName(product.getCategory().getName());
+
+		dto.setVendorId(product.getVendor().getId());
+		dto.setVendorName(product.getVendor().getName());
+
+		return dto;
+	}
 }
