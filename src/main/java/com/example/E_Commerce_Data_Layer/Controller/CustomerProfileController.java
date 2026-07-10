@@ -11,6 +11,7 @@ import com.example.E_Commerce_Data_Layer.service.CustomerProfileService;
 
 @RestController
 @RequestMapping("/customer-profile")
+@CrossOrigin("*")
 public class CustomerProfileController {
 
 	@Autowired

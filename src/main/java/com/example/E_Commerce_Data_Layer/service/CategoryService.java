@@ -1,6 +1,8 @@
 package com.example.E_Commerce_Data_Layer.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -23,17 +25,18 @@ public class CategoryService {
 
 		return repo.save(category);
 	}
-
+	@Cacheable(cacheNames = "cart",key = "#id")
 	public Page<Category> getAll(int page, int size) {
 
 		return repo.findAll(PageRequest.of(page, size));
 	}
 
+	@Cacheable(cacheNames = "cart",key = "#id")
 	public Category getById(Long id) {
 
 		return repo.findById(id).orElseThrow(() -> new NotFound("Category Not Found With Id : " + id));
 	}
-
+	@CachePut(cacheNames = "cart",key = "#id")
 	public Category update(Long id, CategoryDTO dto) {
 
 		Category category = repo.findById(id).orElseThrow(() -> new NotFound("Category Not Found With Id : " + id));

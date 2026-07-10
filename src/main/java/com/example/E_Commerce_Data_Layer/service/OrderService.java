@@ -3,6 +3,8 @@ package com.example.E_Commerce_Data_Layer.service;
 import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -44,6 +46,7 @@ public class OrderService {
 		return repo.findAll(PageRequest.of(page, size)).map(this::convertToDTO);
 	}
 
+	@Cacheable(cacheNames = "cart",key = "#id")
 	public OrderDTO getById(Long id) {
 
 		Order order = repo.findById(id).orElseThrow(() -> new NotFound("Order Not Found With Id : " + id));
@@ -51,6 +54,7 @@ public class OrderService {
 		return convertToDTO(order);
 	}
 
+	@CachePut(cacheNames = "cart",key = "#id")
 	public OrderDTO update(Long id, OrderDTO dto) {
 
 		Order order = repo.findById(id).orElseThrow(() -> new NotFound("Order Not Found With Id : " + id));

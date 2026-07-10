@@ -11,6 +11,7 @@ import com.example.E_Commerce_Data_Layer.service.CategoryService;
 
 @RestController
 @RequestMapping("/categories")
+@CrossOrigin("*")
 public class CategoryController {
 
 	@Autowired

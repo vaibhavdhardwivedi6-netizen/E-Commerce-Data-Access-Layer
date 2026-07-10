@@ -3,6 +3,7 @@ package com.example.E_Commerce_Data_Layer.Controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +19,7 @@ import com.example.E_Commerce_Data_Layer.service.OrderService;
 
 @RestController
 @RequestMapping("/orders")
+@CrossOrigin("*")
 public class OrderController {
 
 	@Autowired

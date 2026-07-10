@@ -1,5 +1,7 @@
 package com.example.E_Commerce_Data_Layer.service;
 
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -34,6 +36,7 @@ public class UserService {
 		return repo.findAll(PageRequest.of(page, size)).map(this::convertToDTO);
 	}
 
+	@Cacheable(cacheNames = "cart",key = "#id")
 	public UserDTO getOneUser(Long id) {
 
 		User user = repo.findById(id).orElseThrow(() -> new NotFound("User Not Found With Id : " + id));
@@ -43,6 +46,7 @@ public class UserService {
 
 	// ================= UPDATE =================
 
+	@CachePut(cacheNames = "cart",key = "#id")
 	public UserDTO update(Long id, UserDTO dto) {
 
 		User user = repo.findById(id).orElseThrow(() -> new NotFound("User Not Found With Id : " + id));

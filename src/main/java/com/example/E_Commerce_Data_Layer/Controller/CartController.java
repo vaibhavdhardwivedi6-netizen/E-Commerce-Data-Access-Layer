@@ -9,6 +9,7 @@ import com.example.E_Commerce_Data_Layer.service.CartService;
 
 @RestController
 @RequestMapping("/cart")
+@CrossOrigin("*")
 public class CartController {
 
 	@Autowired

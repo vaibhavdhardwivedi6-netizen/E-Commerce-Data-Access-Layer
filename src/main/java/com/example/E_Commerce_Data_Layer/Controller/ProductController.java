@@ -10,6 +10,7 @@ import com.example.E_Commerce_Data_Layer.service.ProductService;
 
 @RestController
 @RequestMapping("/products")
+@CrossOrigin("*")
 public class ProductController {
 
 	@Autowired

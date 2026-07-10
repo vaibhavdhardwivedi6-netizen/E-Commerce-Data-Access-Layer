@@ -1,6 +1,7 @@
 package com.example.E_Commerce_Data_Layer.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.example.E_Commerce_Data_Layer.Entity.Cart;
@@ -22,8 +23,8 @@ public class CartService {
 
 	@Autowired
 	private ProductReposetry productRepo;
-
-	// Add Product To Cart
+	
+	
 	public Cart addProduct(Long customerId, Long productId) {
 
 		CustomerProfile customer = customerRepo.findById(customerId)
@@ -41,7 +42,6 @@ public class CartService {
 		return cartRepo.save(cart);
 	}
 
-	// Remove Product From Cart
 	public Cart removeProduct(Long customerId, Long productId) {
 
 		CustomerProfile customer = customerRepo.findById(customerId)
@@ -57,7 +57,7 @@ public class CartService {
 		return cartRepo.save(cart);
 	}
 
-	// Get Customer Cart
+	@Cacheable(cacheNames = "cart",key = "#id")
 	public Cart getCart(Long customerId) {
 
 		CustomerProfile customer = customerRepo.findById(customerId)
@@ -66,7 +66,7 @@ public class CartService {
 		return cartRepo.findByCustomer(customer).orElseThrow(() -> new NotFound("Cart Not Found"));
 	}
 
-	// Clear Cart
+	
 	public String clearCart(Long customerId) {
 
 		CustomerProfile customer = customerRepo.findById(customerId)

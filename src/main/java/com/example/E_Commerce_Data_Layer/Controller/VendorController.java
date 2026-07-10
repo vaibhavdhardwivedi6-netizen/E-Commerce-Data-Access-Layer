@@ -10,6 +10,7 @@ import com.example.E_Commerce_Data_Layer.service.VendorService;
 
 @RestController
 @RequestMapping("/vendors")
+@CrossOrigin("*")
 public class VendorController {
 
 	@Autowired

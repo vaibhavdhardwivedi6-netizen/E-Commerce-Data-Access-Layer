@@ -1,6 +1,8 @@
 package com.example.E_Commerce_Data_Layer.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -33,6 +35,7 @@ public class VendorService {
 		return repo.findAll(PageRequest.of(page, size)).map(this::convertToDTO);
 	}
 
+	@Cacheable(cacheNames = "cart",key = "#id")
 	public VendorDTO getById(Long id) {
 
 		Vendor vendor = repo.findById(id).orElseThrow(() -> new NotFound("Vendor Not Found With Id : " + id));
@@ -40,6 +43,7 @@ public class VendorService {
 		return convertToDTO(vendor);
 	}
 
+	@CachePut(cacheNames = "cart",key = "#id")
 	public VendorDTO update(Long id, VendorDTO dto) {
 
 		Vendor vendor = repo.findById(id).orElseThrow(() -> new NotFound("Vendor Not Found With Id : " + id));
