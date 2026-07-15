@@ -1,6 +1,7 @@
 package com.example.E_Commerce_Data_Layer.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -18,6 +19,7 @@ public class CategoryService {
 	@Autowired
 	private CategoryReposetry repo;
 
+	@CacheEvict(cacheNames = "categories", allEntries = true)
 	public Category save(CategoryDTO dto) {
 
 		Category category = new Category();
@@ -25,18 +27,20 @@ public class CategoryService {
 
 		return repo.save(category);
 	}
-	@Cacheable(cacheNames = "cart",key = "#id")
+
+	@Cacheable(cacheNames = "categories", key = "#page + '-' + #size")
 	public Page<Category> getAll(int page, int size) {
 
 		return repo.findAll(PageRequest.of(page, size));
 	}
 
-	@Cacheable(cacheNames = "cart",key = "#id")
+	@Cacheable(cacheNames = "categories", key = "#id")
 	public Category getById(Long id) {
 
 		return repo.findById(id).orElseThrow(() -> new NotFound("Category Not Found With Id : " + id));
 	}
-	@CachePut(cacheNames = "cart",key = "#id")
+
+	@CachePut(cacheNames = "categories", key = "#id")
 	public Category update(Long id, CategoryDTO dto) {
 
 		Category category = repo.findById(id).orElseThrow(() -> new NotFound("Category Not Found With Id : " + id));
@@ -46,6 +50,7 @@ public class CategoryService {
 		return repo.save(category);
 	}
 
+	@CacheEvict(cacheNames = "categories", key = "#id", allEntries = true)
 	public String delete(Long id) {
 
 		if (!repo.existsById(id)) {
